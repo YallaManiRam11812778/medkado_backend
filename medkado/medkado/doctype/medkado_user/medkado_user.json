@@ -1,0 +1,120 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:email",
+ "creation": "2024-10-29 22:54:06.213146",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "name1",
+  "age",
+  "gender",
+  "email",
+  "location",
+  "my_plan",
+  "referral_code",
+  "photo",
+  "family_members",
+  "referred_people",
+  "validity",
+  "available_coupons"
+ ],
+ "fields": [
+  {
+   "fieldname": "name1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "search_index": 1
+  },
+  {
+   "fieldname": "age",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Age"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Gender"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location"
+  },
+  {
+   "fieldname": "my_plan",
+   "fieldtype": "Data",
+   "label": "My Plan"
+  },
+  {
+   "fieldname": "available_coupons",
+   "fieldtype": "Table",
+   "label": "Available Coupons",
+   "options": "Available Coupons Items"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Photo"
+  },
+  {
+   "fieldname": "referred_people",
+   "fieldtype": "Table",
+   "label": "Referred People",
+   "options": "Referred People"
+  },
+  {
+   "fieldname": "validity",
+   "fieldtype": "Data",
+   "label": "Validity (Plan expiry)"
+  },
+  {
+   "fieldname": "family_members",
+   "fieldtype": "Table",
+   "label": "Family Members",
+   "options": "Family Members"
+  },
+  {
+   "fieldname": "referral_code",
+   "fieldtype": "Data",
+   "label": "Referral Code",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-11-03 12:31:37.587171",
+ "modified_by": "Administrator",
+ "module": "Medkado",
+ "name": "Medkado User",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
