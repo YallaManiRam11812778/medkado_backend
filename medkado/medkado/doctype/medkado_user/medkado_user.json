@@ -49,8 +49,9 @@
   },
   {
    "fieldname": "location",
-   "fieldtype": "Data",
-   "label": "Location"
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Medkado Available Districts"
   },
   {
    "fieldname": "my_plan",
@@ -94,7 +95,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-03 12:31:37.587171",
+ "modified": "2024-11-09 15:41:46.432873",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medkado User",

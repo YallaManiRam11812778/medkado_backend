@@ -6,19 +6,11 @@ from frappe.model.document import Document
 
 
 class MedicalPlan(Document):
-	def after_insert(self):
-		if self.number_of_persons == "Couple":
-			self.append("medical_plan_items",{"category":"Dental","coupons":"x5"})
-			self.save()
-			frappe.db.commit()
-	
-	def on_update(self):
-		print("Updated ======= ",self.as_dict())
+	pass
 
 @frappe.whitelist()
-def adding_medical_plan(number_of_persons:str,money):
+def adding_medical_plan(number_of_persons:str):
 	med_plan = frappe.new_doc("Medical Plan")
 	med_plan.number_of_persons = number_of_persons
-	med_plan.money = money
 	med_plan.insert()
 	frappe.db.commit()

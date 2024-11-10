@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "number_of_persons",
+  "count_of_persons",
   "money",
   "medical_plan_items"
  ],
@@ -27,11 +28,16 @@
    "fieldname": "money",
    "fieldtype": "Currency",
    "label": "Money (in Rs.)"
+  },
+  {
+   "fieldname": "count_of_persons",
+   "fieldtype": "Int",
+   "label": "Count of Persons"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-29 22:45:47.766843",
+ "modified": "2024-11-07 05:58:24.924872",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medical Plan",

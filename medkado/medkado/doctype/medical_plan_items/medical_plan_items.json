@@ -13,9 +13,10 @@
  "fields": [
   {
    "fieldname": "category",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Category"
+   "label": "Category",
+   "options": "Medkado Coupons"
   },
   {
    "fieldname": "coupons",
@@ -32,7 +33,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-29 23:01:08.993267",
+ "modified": "2024-11-09 15:50:59.050978",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medical Plan Items",

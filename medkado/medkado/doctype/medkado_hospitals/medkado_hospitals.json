@@ -1,0 +1,126 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:hospital_name",
+ "creation": "2024-11-09 15:05:15.382731",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "hospital_section",
+  "hospital_details_column",
+  "hospital_short_name",
+  "hospital_name",
+  "hospital_code",
+  "hospital_address_column",
+  "district",
+  "location",
+  "section_break_xsmf",
+  "redeem_coupon_workflow",
+  "available_coupons_section",
+  "available_coupons_items"
+ ],
+ "fields": [
+  {
+   "fieldname": "hospital_name",
+   "fieldtype": "Data",
+   "label": "Hospital Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "hospital_code",
+   "fieldtype": "Data",
+   "label": "Hospital Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "available_coupons_items",
+   "fieldtype": "Table",
+   "label": "Available Coupons Items",
+   "options": "Available Coupons Items"
+  },
+  {
+   "fieldname": "hospital_short_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hospital Short Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Link",
+   "label": "District",
+   "options": "Medkado Available Districts"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Small Text",
+   "label": "Location"
+  },
+  {
+   "fieldname": "available_coupons_section",
+   "fieldtype": "Section Break",
+   "label": "Available Coupons"
+  },
+  {
+   "fieldname": "hospital_details_column",
+   "fieldtype": "Column Break",
+   "label": "Hospital Details"
+  },
+  {
+   "fieldname": "redeem_coupon_workflow",
+   "fieldtype": "Table",
+   "label": "Redeem Coupon Workflow",
+   "options": "Redeem Coupon Workflow"
+  },
+  {
+   "fieldname": "hospital_address_column",
+   "fieldtype": "Column Break",
+   "label": "Hospital Address"
+  },
+  {
+   "fieldname": "section_break_xsmf",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "hospital_section",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-11-09 16:38:10.119085",
+ "modified_by": "Administrator",
+ "module": "Medkado",
+ "name": "Medkado Hospitals",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Hospital",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
