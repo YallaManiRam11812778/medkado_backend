@@ -5,20 +5,34 @@ import frappe
 from frappe.model.document import Document
 import sys
 import pandas as pd
-
+from ast import literal_eval
 class AvailableCouponsItems(Document):
 	pass
 
 def payment_response():
 	pass
 
+@frappe.whitelist(["POST"])
+def adding_family_details(family_details):
+	if not isinstance(family_details,list):
+		family_details = literal_eval(family_details)
+	user_doc = frappe.get_doc("Medkado User",frappe.session.user)
+	for i in family_details:
+		user_doc.append("family_members",i)
+	user_doc.save(ignore_permissions=True)
+	frappe.db.commit()
+	return {"success":True}
+
 @frappe.whitelist()
-def get_this_plan(category:str):
+def get_this_plan(category:str,payemnt=None):
 	try:
-		payment_response()
+		if payemnt==None:
+			response_from_gateway = payment_response()
+			if not response_from_gateway:return False
 		selected_medical_plan = frappe.get_doc("Medical Plan",category)
 		medical_plan_items = selected_medical_plan.medical_plan_items
 		medkado_user_doc = frappe.get_doc("Medkado User",frappe.session.user)
+		medkado_user_doc.my_plan = category
 		for i in medical_plan_items:
 			medkado_user_doc.append("available_coupons",{"category":i["category"],"coupons":i["coupons"]})
 		medkado_user_doc.save(ignore_permissions=True)
