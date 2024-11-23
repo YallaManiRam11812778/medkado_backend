@@ -7,6 +7,7 @@ import datetime
 import random, string
 from frappe.utils.password import check_password
 import sys
+from medkado.medkado.doctype.available_coupons_items.available_coupons_items import get_this_plan
 
 class MedkadoUser(Document):
 	def after_insert(self):
@@ -57,7 +58,9 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 			if "easy to guess" in str(e):
 				return {"success":False,"message":"Password is easy to guess."}
 		new_frappe_user.reload()
-		if referral_code :
+		if frappe.db.get_single_value('Medkado Admin Settings', 'generated_code')==referral_code:
+			get_this_plan(category="Single",payemnt="Not Required")
+		elif referral_code :
 			if frappe.db.exists("Medkado User",{"referral_code":referral_code}):
 				refferer_user_doc = frappe.get_doc("Medkado User",{"referral_code":referral_code})
 				refferer_user_doc.append("referred_people",{"email":email})
@@ -130,7 +133,6 @@ def validate_auth_token(auth_token):
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
 		frappe.throw(str(e))
 		return {"success": False, "message": "Error in Fetching Plans."}
-
 		
 def creation_of_unique_referal_code()->str:
 	# Get the current date and time (fixed for this moment)
