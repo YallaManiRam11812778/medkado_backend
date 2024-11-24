@@ -6,11 +6,13 @@ from frappe.model.document import Document
 import sys
 import pandas as pd
 from ast import literal_eval
+from frappe import utils
+
 class AvailableCouponsItems(Document):
 	pass
 
 def payment_response():
-	pass
+	return True
 
 @frappe.whitelist(["POST"])
 def adding_family_details(family_details):
@@ -32,9 +34,12 @@ def get_this_plan(category:str,payemnt=None):
 		selected_medical_plan = frappe.get_doc("Medical Plan",category)
 		medical_plan_items = selected_medical_plan.medical_plan_items
 		medkado_user_doc = frappe.get_doc("Medkado User",frappe.session.user)
-		medkado_user_doc.my_plan = category
 		for i in medical_plan_items:
+			i = i.__dict__
 			medkado_user_doc.append("available_coupons",{"category":i["category"],"coupons":i["coupons"]})
+		medkado_user_doc.my_plan = category
+		medkado_user_doc.date_of_purchase = utils.today()
+		medkado_user_doc.validity = utils.add_to_date(utils.now(),years=1)
 		medkado_user_doc.save(ignore_permissions=True)
 		frappe.db.commit()
 	except Exception as e:

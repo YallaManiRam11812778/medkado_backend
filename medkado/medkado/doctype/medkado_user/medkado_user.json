@@ -17,6 +17,7 @@
   "family_members",
   "referred_people",
   "validity",
+  "date_of_purchase",
   "available_coupons"
  ],
  "fields": [
@@ -77,7 +78,7 @@
   },
   {
    "fieldname": "validity",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "Validity (Plan expiry)"
   },
   {
@@ -91,11 +92,16 @@
    "fieldtype": "Data",
    "label": "Referral Code",
    "read_only": 1
+  },
+  {
+   "fieldname": "date_of_purchase",
+   "fieldtype": "Date",
+   "label": "Date of Purchase"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-09 15:41:46.432873",
+ "modified": "2024-11-24 15:34:03.472062",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medkado User",

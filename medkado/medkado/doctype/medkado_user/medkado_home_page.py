@@ -14,3 +14,19 @@ def explore_plans():
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
 		frappe.throw(str(e))
 		return {"success": False, "message": "Error in Fetching Plans."}
+
+@frappe.whitelist()
+def dashboard_data():
+	try:
+		medkado_user_doc = frappe.get_doc("Medkado User",frappe.session.user)
+		dop = str(medkado_user_doc.date_of_purchase if type(medkado_user_doc.date_of_purchase)!=None or medkado_user_doc.date_of_purchase!="" else "0-0-0")
+		doe = str(medkado_user_doc.validity if type(medkado_user_doc.validity)!=None or medkado_user_doc.validity!="" else "0-0-0")
+		if not len(medkado_user_doc.available_coupons)>0:return {"success":True,"message":{"dop":dop,"doe":doe,"available_coupons":0}}
+		available_coupons =  sum([i.as_dict()["available_number_of_coupons"] for i in medkado_user_doc.available_coupons])
+		return {"success":True,"message":{"dop":dop,"doe":doe,"available_coupons":available_coupons}}
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error("Error in DashBoard Data.",
+						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
+		frappe.throw(str(e))
+		return {"success": False, "message": "Error in DashBoard."}
