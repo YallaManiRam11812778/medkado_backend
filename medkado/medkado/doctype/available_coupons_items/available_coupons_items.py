@@ -7,47 +7,50 @@ import sys
 import pandas as pd
 from ast import literal_eval
 from frappe import utils
+from medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings import razorpay_payment_by_users
 
 class AvailableCouponsItems(Document):
 	pass
-
-def payment_response():
-	return True
 
 @frappe.whitelist(["POST"])
 def adding_family_details(family_details):
 	if not isinstance(family_details,list):
 		family_details = literal_eval(family_details)
+	if not len(family_details)>0:
+		return False
+	for item in family_details:
+		item['name1'] = item.pop('name')
+	frappe.db.delete("Family Members",{"parent":frappe.session.user})
+	frappe.db.commit()
 	user_doc = frappe.get_doc("Medkado User",frappe.session.user)
 	for i in family_details:
 		user_doc.append("family_members",i)
 	user_doc.save(ignore_permissions=True)
 	frappe.db.commit()
-	return {"success":True}
+	amount = frappe.db.get_value("Medical Plan",{"count_of_persons":len(family_details)},["money"])
+	response_of_razor_pay = razorpay_payment_by_users(amount=amount)
+	return response_of_razor_pay
 
-@frappe.whitelist()
-def get_this_plan(category:str,payemnt=None):
+def updating_after_payment_success(category):
 	try:
-		if payemnt==None:
-			response_from_gateway = payment_response()
-			if not response_from_gateway:return False
 		selected_medical_plan = frappe.get_doc("Medical Plan",category)
 		medical_plan_items = selected_medical_plan.medical_plan_items
 		medkado_user_doc = frappe.get_doc("Medkado User",frappe.session.user)
 		for i in medical_plan_items:
 			i = i.__dict__
-			medkado_user_doc.append("available_coupons",{"category":i["category"],"coupons":i["coupons"]})
+			medkado_user_doc.append("available_coupons",{"category":i["category"],"available_number_of_coupons":int(i["coupons"].replace("x",""))})
 		medkado_user_doc.my_plan = category
 		medkado_user_doc.date_of_purchase = utils.today()
 		medkado_user_doc.validity = utils.add_to_date(utils.now(),years=1)
 		medkado_user_doc.save(ignore_permissions=True)
 		frappe.db.commit()
+		return True
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		frappe.log_error("Getting Plan Error.",
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
 		frappe.throw(str(e))
-		return {"success": False, "message": "Error in Getting Plans."}
+		return {"success": False, "message": "Error in updating_after_payment_success."}
 	
 @frappe.whitelist()
 def coupons_page():

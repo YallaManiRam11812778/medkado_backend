@@ -148,23 +148,23 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"medkado.tasks.all"
-# 	],
+scheduler_events = {
+	"all": [
+		"medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.make_inactive_for_next_half_an_hour"
+	],
 # 	"daily": [
 # 		"medkado.tasks.daily"
 # 	],
-# 	"hourly": [
-# 		"medkado.tasks.hourly"
-# 	],
+	"hourly": [
+		"medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.get_payment_status"
+	],
 # 	"weekly": [
 # 		"medkado.tasks.weekly"
 # 	],
 # 	"monthly": [
 # 		"medkado.tasks.monthly"
 # 	],
-# }
+}
 
 # Testing
 # -------

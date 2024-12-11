@@ -1,27 +1,53 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
- "autoname": "field:district",
- "creation": "2024-11-09 15:40:09.908099",
+ "autoname": "field:unique_payment_id",
+ "creation": "2024-12-09 23:53:23.149415",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "district"
+  "active",
+  "unique_payment_id",
+  "status",
+  "razor_pay_response",
+  "error_message"
  ],
  "fields": [
   {
-   "fieldname": "district",
+   "fieldname": "unique_payment_id",
    "fieldtype": "Data",
-   "label": "District",
+   "label": "Unique Payment ID",
    "unique": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "label": "Status (Payment Link)"
+  },
+  {
+   "fieldname": "razor_pay_response",
+   "fieldtype": "Small Text",
+   "label": "Razor Pay Response"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Small Text",
+   "label": "Error Message"
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-10 19:08:35.584417",
+ "modified": "2024-12-11 06:19:59.142107",
  "modified_by": "Administrator",
  "module": "Medkado",
- "name": "Medkado Available Districts",
+ "name": "RazorPay Payment Logs",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
@@ -42,6 +68,7 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
    "print": 1,
    "read": 1,
    "report": 1,

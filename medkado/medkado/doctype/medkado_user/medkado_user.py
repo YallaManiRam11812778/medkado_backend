@@ -7,7 +7,7 @@ import datetime
 import random, string
 from frappe.utils.password import check_password
 import sys
-from medkado.medkado.doctype.available_coupons_items.available_coupons_items import get_this_plan
+from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
 
 class MedkadoUser(Document):
 	def after_insert(self):
@@ -59,7 +59,7 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 				return {"success":False,"message":"Password is easy to guess."}
 		new_frappe_user.reload()
 		if frappe.db.get_single_value('Medkado Admin Settings', 'generated_code')==referral_code:
-			get_this_plan(category="Single",payemnt="Not Required")
+			updating_after_payment_success(category="Single")
 		elif referral_code :
 			if frappe.db.exists("Medkado User",{"referral_code":referral_code}):
 				refferer_user_doc = frappe.get_doc("Medkado User",{"referral_code":referral_code})

@@ -88,7 +88,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-09 16:38:10.119085",
+ "modified": "2024-12-10 19:08:01.237330",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medkado Hospitals",
@@ -116,6 +116,19 @@
    "read": 1,
    "report": 1,
    "role": "Hospital",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Medkado User",
+   "select": 1,
    "share": 1,
    "write": 1
   }
