@@ -68,6 +68,7 @@ def make_inactive_for_next_half_an_hour():
 			updating_inactive_status.save()
 			frappe.db.commit()
 
+@frappe.whitelist()
 def get_payment_status():
 	from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
 	only_created_not_payment_done = frappe.db.get_list("RazorPay Payment Logs",filters={"status":"created","active":1},pluck='name')

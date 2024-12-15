@@ -55,7 +55,7 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 				if "mobile_no" in str(e): error = "Mobile Number"
 				if f"{email}" in str(e): error = "Email"
 				return {"success":False,"message":f" {error} is already Used."}
-			if "easy to guess" in str(e):
+			if "easy to guess" in str(e) or "Capitalization" in str(e) or "Common names" in str(e) or "Better add a few" in str(e):
 				return {"success":False,"message":"Password is easy to guess."}
 		new_frappe_user.reload()
 		if frappe.db.get_single_value('Medkado Admin Settings', 'generated_code')==referral_code:
@@ -93,12 +93,12 @@ def login_medkado(email,password):
 		return {"success":False,"message":str(e)}
 
 @frappe.whitelist(allow_guest=True)
-def forgot_pwd(user_name,phone_num,pwd):
+def forgot_pwd(email,phoneDigits,newPassword):
 	try:
-		exists_or_not = frappe.db.get_all("User",{"name":user_name,"phone":["like",f"%{phone_num}"]})
+		exists_or_not = frappe.db.get_all("User",{"name":email,"mobile_no":["like",f"%{phoneDigits}"]})
 		if not len(exists_or_not)>0:return {"success":False,"message":"Invalid User or Phone number."}
-		user_doc = frappe.get_doc("User",user_name)
-		user_doc.new_password = pwd
+		user_doc = frappe.get_doc("User",email)
+		user_doc.new_password = newPassword
 		if not user_doc.api_key:
 			user_doc.api_key = frappe.gene3rate_hash(length=15)   # Generate a 15-character generate_hash for the API key
 		api_secret = frappe.generate_hash(length=15)
@@ -108,10 +108,13 @@ def forgot_pwd(user_name,phone_num,pwd):
 		return {"success":True,"message":{'Authorization': f'token {user_doc.api_key}:{api_secret}'}}
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
+		if "easy to guess" in str(e) or "Capitalization" in str(e) or "Common names" in str(e) or "Better add a few" in str(e):
+			return {"success":False,"message":"Password is easy to guess."}
+		if "Repeats like" in str(e):
+			return {"success":False,"message":"Try to avoid repeated words and characters"}
 		frappe.log_error("Error while Updating Password.",
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
-		frappe.throw(str(e))
-		return {"success": False, "message": "Error while Updating Password."}
+		return {"success": False, "message": "Password too weak."}
 
 @frappe.whitelist(allow_guest=True)
 def validate_auth_token(auth_token):
