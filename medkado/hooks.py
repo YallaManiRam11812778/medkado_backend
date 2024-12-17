@@ -149,9 +149,14 @@ app_license = "mit"
 # ---------------
 
 scheduler_events = {
-	"all": [
-		"medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.make_inactive_for_next_half_an_hour"
-	],
+	# "all": [
+	# 	"medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.make_inactive_for_next_half_an_hour"
+	# ],
+    "cron": {
+        "* * * * *": [
+            "medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.make_inactive_for_next_half_an_hour"
+        ]
+    },
 # 	"daily": [
 # 		"medkado.tasks.daily"
 # 	],
