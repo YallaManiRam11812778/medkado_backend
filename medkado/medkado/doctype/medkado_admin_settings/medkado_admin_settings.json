@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "generated_code",
+  "referral_amount",
   "razorpay_settings_section",
   "client_id",
   "client_secret"
@@ -30,12 +31,18 @@
    "fieldname": "client_secret",
    "fieldtype": "Data",
    "label": "Client Secret"
+  },
+  {
+   "default": "50",
+   "fieldname": "referral_amount",
+   "fieldtype": "Int",
+   "label": "Referral Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-10 19:07:17.885949",
+ "modified": "2024-12-24 17:55:34.472489",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medkado Admin Settings",

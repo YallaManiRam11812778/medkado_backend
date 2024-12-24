@@ -16,6 +16,7 @@
   "referral_code",
   "photo",
   "family_members",
+  "balance_amount",
   "referred_people",
   "validity",
   "date_of_purchase",
@@ -98,11 +99,17 @@
    "fieldname": "date_of_purchase",
    "fieldtype": "Date",
    "label": "Date of Purchase"
+  },
+  {
+   "default": "0",
+   "fieldname": "balance_amount",
+   "fieldtype": "Int",
+   "label": "Balance Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-10 19:06:50.883090",
+ "modified": "2024-12-24 17:46:35.216643",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medkado User",

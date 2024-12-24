@@ -63,6 +63,7 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 		elif referral_code :
 			if frappe.db.exists("Medkado User",{"referral_code":referral_code}):
 				refferer_user_doc = frappe.get_doc("Medkado User",{"referral_code":referral_code})
+				refferer_user_doc.balance_amount = refferer_user_doc.balance_amount + int(frappe.db.get_single_value('Medkado Admin Settings', 'referral_amount'))
 				refferer_user_doc.append("referred_people",{"email":email})
 				refferer_user_doc.save(ignore_permissions=True)
 				frappe.db.commit()
@@ -136,7 +137,63 @@ def validate_auth_token(auth_token):
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
 		frappe.throw(str(e))
 		return {"success": False, "message": "Error in Fetching Plans."}
-		
+
+@frappe.whitelist()
+def withdrawal_requesting():
+	try:
+		medkado_user = frappe.get_doc("Medkado User",frappe.session.user)
+		user_list = frappe.db.get_value("User",frappe.session.user,"mobile_no")
+		prev_balance_amount = float(medkado_user.balance_amount)
+		medkado_user.balance_amount = 0
+		medkado_user.save(ignore_permissions=True)
+
+		updating_withraw_request = frappe.new_doc("Withdrawal Request")
+		updating_withraw_request.username = frappe.session.user
+		updating_withraw_request.amount = prev_balance_amount
+		updating_withraw_request.phone = user_list
+		updating_withraw_request.insert(ignore_permissions=True)
+		frappe.db.commit()
+		medkado_user.reload()
+		return {"success":True,"message":"Withdraw Request Sent."}
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error("Error in Updating Withdrawal Request.",
+						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
+		frappe.throw(str(e))
+		return {"success": False, "message": "Error in Withdrawal Request."}
+
+@frappe.whitelist()
+def referred_people():
+	try:
+		list_of_referrals = frappe.get_doc("Medkado User",frappe.session.user)
+		referral_code = list_of_referrals.referral_code
+		list_of_referrals = list_of_referrals.as_dict()
+		list_of_referrals = list_of_referrals.referred_people
+		if len(list_of_referrals)>0:
+			array_of_mails = [i["email"] for i in list_of_referrals]
+		else:
+			array_of_mails = []
+		return {"success":True,"referred_users":array_of_mails,"referral_code":referral_code}
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error("Error in Referred People Fetching.",
+						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
+		frappe.throw(str(e))
+		return {"success": False, "message": "Error in Referred People Fetching."}
+
+@frappe.whitelist()
+def done_payment_for_user():
+	try:
+		withdraw_amount = frappe.db.get_value("Medkado User",frappe.session.user,"balance_amount")
+		all_payments_done = frappe.db.get_all("Withdrawal Request",{"username":frappe.session.user},["amount","status","creation as requested_time","modified as paid_time"])
+		return {"success":True,"message":all_payments_done,"withdraw_amount":withdraw_amount}
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error("Error in Fetching Payment Recieved.",
+						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
+		frappe.throw("Error in Fetching Payment Recieved."+str(e))
+		return {"success": False, "message": "Error in Fetching Payment Recieved."}
+	
 def creation_of_unique_referal_code()->str:
 	# Get the current date and time (fixed for this moment)
 	now = datetime.datetime.now()

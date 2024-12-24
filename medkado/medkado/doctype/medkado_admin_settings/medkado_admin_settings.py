@@ -66,6 +66,8 @@ def make_inactive_for_next_half_an_hour():
 		if get_datetime(frappe_now()) >= utils.add_to_date(i["creation"],hours=1):
 			updating_inactive_status = frappe.get_doc("RazorPay Payment Logs",i["name"])
 			updating_inactive_status.active = 0
+			updating_inactive_status.status = updating_inactive_status.status + " & Link Expired"
+			if updating_inactive_status.status == "paid":updating_inactive_status.status = "paid"
 			updating_inactive_status.save(ignore_permissions=True)
 			frappe.db.commit()
 
@@ -111,4 +113,4 @@ def payment_details_of_user():
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		frappe.log_error(f"Error in payment_details_of_user.",
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
-		return False
+		return {'success':False}
