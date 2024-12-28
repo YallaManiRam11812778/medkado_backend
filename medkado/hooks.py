@@ -154,15 +154,16 @@ scheduler_events = {
 	# ],
     "cron": {
         "* * * * *": [
+            "medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.get_payment_status",
             "medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.make_inactive_for_next_half_an_hour"
         ]
     },
 # 	"daily": [
 # 		"medkado.tasks.daily"
 # 	],
-	"hourly": [
-		"medkado.medkado.doctype.medkado_admin_settings.medkado_admin_settings.get_payment_status"
-	],
+	# "hourly": [
+		# "medkado.tasks.hourly"
+	# ],
 # 	"weekly": [
 # 		"medkado.tasks.weekly"
 # 	],
