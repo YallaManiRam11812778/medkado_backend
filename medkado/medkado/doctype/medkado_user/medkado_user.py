@@ -60,6 +60,7 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 				return {"success":False,"message":"Password is easy to guess."}
 		new_frappe_user.reload()
 		if frappe.db.get_single_value('Medkado Admin Settings', 'generated_code')==referral_code:
+			frappe.session.user = email
 			updating_after_payment_success(category="Single")
 		elif referral_code :
 			if frappe.db.exists("Medkado User",{"referral_code":referral_code}):
