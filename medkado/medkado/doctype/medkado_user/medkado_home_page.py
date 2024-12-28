@@ -20,7 +20,9 @@ def dashboard_data():
 	try:
 		medkado_user_doc = frappe.get_doc("Medkado User",frappe.session.user)
 		dop = str(medkado_user_doc.date_of_purchase if type(medkado_user_doc.date_of_purchase)!=None or medkado_user_doc.date_of_purchase!="" else "0-0-0")
+		if dop==None:dop="0-0-0"
 		doe = str(medkado_user_doc.validity if type(medkado_user_doc.validity)!=None or medkado_user_doc.validity!="" else "0-0-0")
+		if doe==None:doe="0-0-0"
 		referral_code = medkado_user_doc.referral_code
 		if not len(medkado_user_doc.available_coupons)>0:return {"success":True,"message":{"dop":dop,"doe":doe,"available_coupons":0,"withdrawal":medkado_user_doc.balance_amount,"card_number":referral_code}}
 		available_coupons =  sum([i.as_dict()["available_number_of_coupons"] for i in medkado_user_doc.available_coupons])
