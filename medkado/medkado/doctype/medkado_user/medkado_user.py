@@ -8,6 +8,7 @@ import random, string
 from frappe.utils.password import check_password
 import sys
 from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
+import traceback
 
 class MedkadoUser(Document):
 	def after_insert(self):
@@ -74,7 +75,11 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 		signing_new_user.reload()
 		return {"success":True,"message":api_generate_keys(email=email)}
 	except Exception as e:
-		frappe.log_error("Error in Signing-Up",f"'{email}' got an error -> \n {str(e)}")
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error(
+			"Error Near Sign-Up.",
+			"line No:{}\n{}".format(exc_tb.tb_lineno, traceback.format_exc()),
+		)
 		return {"success":False,"message":"Please Contact Our Support Team OR Try again Signing Up."}
 
 @frappe.whitelist(allow_guest=True)
