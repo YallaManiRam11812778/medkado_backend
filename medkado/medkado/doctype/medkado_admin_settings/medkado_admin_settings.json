@@ -13,6 +13,7 @@
  ],
  "fields": [
   {
+   "default": "2345678uygfdsw3456",
    "fieldname": "generated_code",
    "fieldtype": "Data",
    "label": "Generated Code"
@@ -42,7 +43,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-12-24 17:55:34.472489",
+ "modified": "2024-12-25 17:14:31.494957",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "Medkado Admin Settings",
