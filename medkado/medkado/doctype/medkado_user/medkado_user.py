@@ -59,6 +59,9 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 			if "easy to guess" in str(e) or "Capitalization" in str(e) or "Common names" in str(e) or "Better add a few" in str(e):
 				return {"success":False,"message":"Password is easy to guess."}
 		new_frappe_user.reload()
+		signing_new_user.insert(ignore_permissions=True)
+		frappe.db.commit()
+		signing_new_user.reload()
 		if frappe.db.get_single_value('Medkado Admin Settings', 'generated_code')==referral_code:
 			frappe.session.user = email
 			updating_after_payment_success(category="Single")
@@ -71,9 +74,6 @@ def sign_up(email:str,password:str,referral_code=None,mobile_no:str=None,distric
 				frappe.db.commit()
 				refferer_user_doc.reload()
 
-		signing_new_user.insert(ignore_permissions=True)
-		frappe.db.commit()
-		signing_new_user.reload()
 		return {"success":True,"message":api_generate_keys(email=email)}
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
