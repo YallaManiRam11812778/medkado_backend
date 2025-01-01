@@ -24,7 +24,7 @@ def razorpay_payment_by_users(amount):
 		# Initialize Razorpay client
 		client = razorpay.Client(auth=(client_credentials_razorpay.client_id, client_credentials_razorpay.client_secret))
 		user_doc = frappe.get_doc("User",frappe.session.user)
-		expiry_time_unix = int(time.time()) + int(16*60)  # 3600 seconds = 1 hour
+		expiry_time_unix = int(time.time()) + 3600  # 3600 seconds = 1 hour
 		payment_link = client.payment_link.create({
 		"amount": amount_in_rs_to_paise,     # Amount in smallest currency unit (e.g., paise for INR)
 		"currency": "INR",
@@ -90,27 +90,54 @@ def payment_details_of_user():
 	try:
 		payload = frappe.request.get_data(as_text=True)
 		payload = frappe.parse_json(payload)
-		frappe.log_error("Expired linked json",f"{payload}")
-		status = payload["payload"]["order"]["entity"]["status"]
-		amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
-		name_of_razorpaylogs = payload["payload"]["payment_link"]["entity"]["id"]
-		updation_of_doc = frappe.get_doc("RazorPay Payment Logs",name_of_razorpaylogs)
-		frappe.session.user = updation_of_doc.owner
-		updation_of_doc.status = status
-		updation_of_doc.amount = amount_paid
-		if status == "expired":updation_of_doc.active = 0
-		updation_of_doc.entire_message = f"{payload}"
-		updation_of_doc.save(ignore_permissions=True)
+		frappe.log_error("Payment payload received", f"{payload}")
+
+		# Detect the event type
+		event_type = payload.get("event")
+		
+		# Initialize variables
+		payment_link_id = None
+		status = None
+		amount_paid = 0
+
+		if event_type == "payment_link.paid":
+			# Extract from 'paid' schema
+			payment_link_id = payload["payload"]["payment_link"]["entity"]["id"]
+			status = payload["payload"]["order"]["entity"]["status"]
+			amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
+		elif event_type == "payment_link.expired":
+			# Extract from 'expired' schema
+			payment_link_id = payload["payload"]["payment_link"]["entity"]["id"]
+			status = payload["payload"]["payment_link"]["entity"]["status"]
+
+		if not payment_link_id or not status:
+			frappe.log_error("Missing data in payload", f"{payload}")
+			return {'success': False, 'message': 'Invalid payload structure.'}
+
+		# Fetch the RazorPay Payment Logs document
+		payment_log_doc = frappe.get_doc("RazorPay Payment Logs", payment_link_id)
+		frappe.session.user = payment_log_doc.owner  # Set session user as the owner
+
+		# Update the payment log document
+		payment_log_doc.status = status
+		payment_log_doc.amount = amount_paid
+		payment_log_doc.entire_message = f"{payload}"
+
+		if status == "expired":
+			payment_log_doc.active = 0  # Mark as inactive for expired links\
+		payment_log_doc.save(ignore_permissions=True)
 		frappe.db.commit()
+		# Handle successful payments
 		if status == "paid":
 			user = frappe.get_doc("Medkado User",frappe.session.user)
 			from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
 			updating_after_payment_success(user.my_plan)
+		return {'success': True}
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		frappe.log_error(f"Error in payment_details_of_user --- {frappe.session.user}.",
-						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
-		return {'success':False}
+						 f"Line No: {exc_tb.tb_lineno}\n{str(e)}")
+		return {'success': False}
 
 @frappe.whitelist()
 def payment_details_of_user_dashboard():
