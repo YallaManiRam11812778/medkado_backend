@@ -9,6 +9,7 @@ import time
 from frappe.utils import now as frappe_now, get_datetime
 from frappe import utils
 from ast import literal_eval
+import json
 
 class MedkadoAdminSettings(Document):
 	pass
@@ -71,42 +72,50 @@ def razorpay_payment_by_users(amount):
 # 			updating_inactive_status.save(ignore_permissions=True)
 # 			frappe.db.commit()
 
-# def get_payment_status():
-# 	try:
-# 		only_created_not_payment_done = frappe.db.get_list("RazorPay Payment Logs",filters={"status":"created","active":1},pluck='name')
-# 		if not len(only_created_not_payment_done)>0:
-# 			return
-# 		from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
-# 		client_credentials_razorpay = frappe.get_single("Medkado Admin Settings")
-# 		client = razorpay.Client(auth=(client_credentials_razorpay.client_id, client_credentials_razorpay.client_secret))
-# 		for _ in only_created_not_payment_done:
-# 			payment_details = client.payment_link.fetch(_)
-# 			rp_log_status = frappe.get_doc("RazorPay Payment Logs",_)
-# 			rp_log_status.status = payment_details.get("status")
-# 			if rp_log_status.status == "paid":
-# 				user = frappe.get_doc("Medkado User",rp_log_status.owner)
-# 				frappe.session.user = rp_log_status.owner
-# 				updating_after_payment_success(user.my_plan)
-# 				rp_log_status.save(ignore_permissions=True)
-# 				frappe.db.commit()
-# 	except Exception as e:
-# 		exc_type, exc_obj, exc_tb = sys.exc_info()
-# 		frappe.log_error(f"Error in Getting Payment status.",
-# 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
-# 		return False
+def get_payment_status():
+	try:
+		only_created_not_payment_done = frappe.db.get_list("RazorPay Payment Logs",filters={"status":"created","active":1},pluck='name')
+		if not len(only_created_not_payment_done)>0:
+			return
+		client_credentials_razorpay = frappe.get_single("Medkado Admin Settings")
+		client = razorpay.Client(auth=(client_credentials_razorpay.client_id, client_credentials_razorpay.client_secret))
+		for _ in only_created_not_payment_done:
+			payment_details = client.payment_link.fetch(_)
+			rp_log_status = frappe.get_doc("RazorPay Payment Logs",_)
+			rp_log_status.status = payment_details.get("status")
+			if rp_log_status.status == "paid":
+				user = frappe.get_doc("Medkado User",rp_log_status.owner)
+				frappe.session.user = rp_log_status.owner
+				from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
+				updating_after_payment_success(user.my_plan)
+				rp_log_status.save(ignore_permissions=True)
+				frappe.db.commit()
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error(f"Error in Getting Payment status.",
+						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
+		return False
 
 @frappe.whitelist(allow_guest=True)
 def payment_details_of_user():
 	try:
 		payload = frappe.request.get_data(as_text=True)
+		parsed_data = frappe.parse_json(payload)
+		print(parsed_data,">"*199,type(parsed_data))
+		frappe.log_error("Parsed Json",parsed_data)
 		status = payload["payload"]["order"]["entity"]["status"]
 		# amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
 		name_of_razorpaylogs = payload["payload"]["payment_link"]["entity"]["id"]
 		updation_of_doc = frappe.get_doc("RazorPay Payment Logs",name_of_razorpaylogs)
+		frappe.session.user = updation_of_doc.owner
 		updation_of_doc.status = status
 		updation_of_doc.razor_pay_response = f"{payload}"
 		updation_of_doc.save(ignore_permissions=True)
 		frappe.db.commit()
+		if status == "paid":
+			user = frappe.get_doc("Medkado User",frappe.session.user)
+			from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
+			updating_after_payment_success(user.my_plan)
 		# list_of_details = frappe.db.get_all("RazorPay Payment Logs",{"owner":frappe.session.user},["active","creation","status","razor_pay_response"])
 		# if not len(list_of_details)>0:
 		# 	return {"success":True,"message":[]}
