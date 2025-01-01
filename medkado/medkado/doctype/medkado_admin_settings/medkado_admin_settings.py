@@ -61,17 +61,6 @@ def razorpay_payment_by_users(amount):
 		payment_logs_rp.insert(ignore_permissions=True)
 		frappe.db.commit()
 
-# def make_inactive_for_next_half_an_hour():
-# 	list_of_active_to_check = frappe.get_list("RazorPay Payment Logs",{"active":1,"status":["!=","paid"]},["*"])
-# 	for i in list_of_active_to_check:
-# 		if get_datetime(frappe_now()) >= utils.add_to_date(i["creation"],hours=1):
-# 			updating_inactive_status = frappe.get_doc("RazorPay Payment Logs",i["name"])
-# 			updating_inactive_status.active = 0
-# 			updating_inactive_status.status = updating_inactive_status.status + " & Link Expired"
-# 			if updating_inactive_status.status == "paid":updating_inactive_status.status = "paid"
-# 			updating_inactive_status.save(ignore_permissions=True)
-# 			frappe.db.commit()
-
 def get_payment_status():
 	try:
 		only_created_not_payment_done = frappe.db.get_list("RazorPay Payment Logs",filters={"status":"created","active":1},pluck='name')
@@ -130,7 +119,7 @@ def payment_details_of_user_dashboard():
 			return {"success":True,"message":[]}
 		for _ in list_of_details:
 			response = literal_eval(_["razor_pay_response"])
-			_["amount"] = response["amount"]
+			_["amount"] = response["amount"]/100
 			_["url"] = response["short_url"]
 			_["amount_paid"] = response["amount_paid"]
 			_["url_expiry"] = utils.add_to_date(_["creation"],hours=1)
