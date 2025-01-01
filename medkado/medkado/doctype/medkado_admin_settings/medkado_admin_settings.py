@@ -37,7 +37,7 @@ def razorpay_payment_by_users(amount):
 			"sms": True,
 			"email": True
 		},
-            "expire_by": expiry_time_unix
+			"expire_by": expiry_time_unix
 		})
 		if "id" not in payment_link:
 			("Payment link creation failed: Missing payment link ID.")
@@ -98,6 +98,12 @@ def get_payment_status():
 @frappe.whitelist()
 def payment_details_of_user():
 	try:
+		payload = frappe.request.get_data(as_text=True)
+		headers = frappe.request.headers
+		# Log the webhook for debugging
+		frappe.log_error("Razorpay Webhook Received",payload)
+
+		frappe.log_error("Payment Details",headers)
 		list_of_details = frappe.db.get_all("RazorPay Payment Logs",{"owner":frappe.session.user},["active","creation","status","razor_pay_response"])
 		if not len(list_of_details)>0:
 			return {"success":True,"message":[]}
