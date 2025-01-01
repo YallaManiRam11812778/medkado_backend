@@ -95,9 +95,10 @@ def get_payment_status():
 						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
 		return False
 
-@frappe.whitelist()
-def payment_details_of_user(allow_guest=True):
+@frappe.whitelist(allow_guest=True)
+def payment_details_of_user():
 	try:
+		print("Entered Through razor pay ==================================== ",frappe.session.user)
 		payload = frappe.request.get_data(as_text=True)
 		headers = frappe.request.headers
 		# Log the webhook for debugging
