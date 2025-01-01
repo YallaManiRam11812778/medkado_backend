@@ -96,7 +96,7 @@ def get_payment_status():
 		return False
 
 @frappe.whitelist()
-def payment_details_of_user():
+def payment_details_of_user(allow_guest=True):
 	try:
 		payload = frappe.request.get_data(as_text=True)
 		headers = frappe.request.headers
