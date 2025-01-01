@@ -102,19 +102,40 @@ def payment_details_of_user():
 		payload = frappe.request.get_data(as_text=True)
 		payload = frappe.parse_json(payload)
 		status = payload["payload"]["order"]["entity"]["status"]
-		# amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
+		amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
 		name_of_razorpaylogs = payload["payload"]["payment_link"]["entity"]["id"]
 		updation_of_doc = frappe.get_doc("RazorPay Payment Logs",name_of_razorpaylogs)
 		frappe.session.user = updation_of_doc.owner
 		updation_of_doc.status = status
+		updation_of_doc.amount = amount_paid
 		if status == "expired":updation_of_doc.active = 0
-		updation_of_doc.razor_pay_response = f"{payload}"
+		updation_of_doc.entire_message = f"{payload}"
 		updation_of_doc.save(ignore_permissions=True)
 		frappe.db.commit()
 		if status == "paid":
 			user = frappe.get_doc("Medkado User",frappe.session.user)
 			from medkado.medkado.doctype.available_coupons_items.available_coupons_items import updating_after_payment_success
 			updating_after_payment_success(user.my_plan)
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		frappe.log_error(f"Error in payment_details_of_user --- {frappe.session.user}.",
+						 "line No:{}\n{}".format(exc_tb.tb_lineno, str(e)))
+		return {'success':False}
+
+@frappe.whitelist()
+def payment_details_of_user_dashboard():
+	try:
+		list_of_details = frappe.db.get_all("RazorPay Payment Logs",{"owner":frappe.session.user},["active","creation","status","razor_pay_response"])
+		if not len(list_of_details)>0:
+			return {"success":True,"message":[]}
+		for _ in list_of_details:
+			response = literal_eval(_["razor_pay_response"])
+			_["amount"] = response["amount"]
+			_["url"] = response["short_url"]
+			_["amount_paid"] = response["amount_paid"]
+			_["url_expiry"] = utils.add_to_date(_["creation"],hours=1)
+			del _["razor_pay_response"]
+		return {"success":True,"message":list_of_details}
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		frappe.log_error(f"Error in payment_details_of_user.",

@@ -8,10 +8,11 @@
  "engine": "InnoDB",
  "field_order": [
   "active",
+  "amount",
   "unique_payment_id",
   "status",
   "razor_pay_response",
-  "error_message"
+  "entire_message"
  ],
  "fields": [
   {
@@ -31,20 +32,26 @@
    "label": "Razor Pay Response"
   },
   {
-   "fieldname": "error_message",
-   "fieldtype": "Small Text",
-   "label": "Error Message"
-  },
-  {
    "default": "1",
    "fieldname": "active",
    "fieldtype": "Check",
    "label": "Active"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Data",
+   "label": "Amount",
+   "length": 6
+  },
+  {
+   "fieldname": "entire_message",
+   "fieldtype": "Small Text",
+   "label": "Razorpay's Return Message"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-11 06:19:59.142107",
+ "modified": "2025-01-01 12:48:33.808770",
  "modified_by": "Administrator",
  "module": "Medkado",
  "name": "RazorPay Payment Logs",
