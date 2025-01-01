@@ -90,6 +90,7 @@ def payment_details_of_user():
 	try:
 		payload = frappe.request.get_data(as_text=True)
 		payload = frappe.parse_json(payload)
+		frappe.log_error("Expired linked json",f"{payload}")
 		status = payload["payload"]["order"]["entity"]["status"]
 		amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
 		name_of_razorpaylogs = payload["payload"]["payment_link"]["entity"]["id"]
