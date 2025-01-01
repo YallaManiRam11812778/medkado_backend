@@ -24,7 +24,7 @@ def razorpay_payment_by_users(amount):
 		# Initialize Razorpay client
 		client = razorpay.Client(auth=(client_credentials_razorpay.client_id, client_credentials_razorpay.client_secret))
 		user_doc = frappe.get_doc("User",frappe.session.user)
-		expiry_time_unix = int(time.time()) + 3600  # 3600 seconds = 1 hour
+		expiry_time_unix = int(time.time()) + 3  # 3600 seconds = 1 hour
 		payment_link = client.payment_link.create({
 		"amount": amount_in_rs_to_paise,     # Amount in smallest currency unit (e.g., paise for INR)
 		"currency": "INR",
