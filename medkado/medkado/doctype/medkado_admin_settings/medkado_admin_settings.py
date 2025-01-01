@@ -100,9 +100,7 @@ def get_payment_status():
 def payment_details_of_user():
 	try:
 		payload = frappe.request.get_data(as_text=True)
-		parsed_data = frappe.parse_json(payload)
-		print(parsed_data,">"*199,type(parsed_data))
-		frappe.log_error("Parsed Json",parsed_data)
+		payload = frappe.parse_json(payload)
 		status = payload["payload"]["order"]["entity"]["status"]
 		# amount_paid = payload["payload"]["order"]["entity"]["amount_paid"]
 		name_of_razorpaylogs = payload["payload"]["payment_link"]["entity"]["id"]
