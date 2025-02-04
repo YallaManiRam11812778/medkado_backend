@@ -90,7 +90,7 @@ def login_medkado(email,password):
 		frappe.session.user = email
 		user = frappe.get_doc("User", email)
 		if not user.api_key:
-			user.api_key = frappe.gene3rate_hash(length=15)   # Generate a 15-character generate_hash for the API key
+			user.api_key = frappe.generate_hash(length=15)   # Generate a 15-character generate_hash for the API key
 		api_secret = frappe.generate_hash(length=15)
 		user.api_secret = api_secret  # Generate a 15-character generate_hash for the API secret
 		user.save(ignore_permissions=True)  # Save the keys to the database
