@@ -107,7 +107,7 @@ def forgot_pwd(email,phoneDigits,newPassword):
 		user_doc = frappe.get_doc("User",email)
 		user_doc.new_password = newPassword
 		if not user_doc.api_key:
-			user_doc.api_key = frappe.gene3rate_hash(length=15)   # Generate a 15-character generate_hash for the API key
+			user_doc.api_key = frappe.generate_hash(length=15)   # Generate a 15-character generate_hash for the API key
 		api_secret = frappe.generate_hash(length=15)
 		user_doc.api_secret = api_secret  # Generate a 15-character generate_hash for the API secret
 		user_doc.save(ignore_permissions=True)  # Save the keys to the database
